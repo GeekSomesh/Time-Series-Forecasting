@@ -4,3 +4,5 @@ pandas
 joblib
 matplotlib
 numpy
+fastapi
+pydantic
