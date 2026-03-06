@@ -1,5 +1,11 @@
 <div align="center">
 
+### **[Live App — time-series-forecasting-ml-model.streamlit.app](https://time-series-forecasting-ml-model.streamlit.app/)**
+
+[![Live Demo](https://img.shields.io/badge/Open%20Live%20App-time--series--forecasting--ml--model.streamlit.app-c9a84c?style=for-the-badge&logo=streamlit&logoColor=080a12)](https://time-series-forecasting-ml-model.streamlit.app/)
+
+---
+
 # TIME SERIES
 ### FORECASTING & INVENTORY INTELLIGENCE
 
@@ -10,6 +16,8 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.x-1a1a2e?style=flat-square&logo=streamlit&logoColor=c9a84c)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.x-1a1a2e?style=flat-square&logo=fastapi&logoColor=c9a84c)
 ![License](https://img.shields.io/badge/License-MIT-1a1a2e?style=flat-square)
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit%20App-c9a84c?style=for-the-badge&logo=streamlit&logoColor=080a12)](https://time-series-forecasting-ml-model.streamlit.app/)
 
 </div>
 
@@ -26,7 +34,7 @@
 7. [Training Pipeline](#7-training-pipeline)
 8. [Streamlit Dashboard](#8-streamlit-dashboard)
 9. [REST API — FastAPI](#9-rest-api--fastapi)
-10. [Installation & Setup](#10-installation--setup)
+10. [Live Demo](#10-live-demo)
 11. [Usage Guide](#11-usage-guide)
 12. [Model Inventory](#12-model-inventory)
 13. [Key Insights](#13-key-insights)
@@ -410,44 +418,19 @@ flowchart LR
 
 ---
 
-## 10. Installation & Setup
+## 10. Live Demo
 
-### Prerequisites
-- Python 3.10+
-- pip
+<div align="center">
 
-### Steps
+### The app is live — no setup required
 
-```bash
-# 1. Clone
-git clone https://github.com/GeekSomesh/Time-Series-Forecasting.git
-cd Time-Series-Forecasting
+[![Open App](https://img.shields.io/badge/Open%20App-time--series--forecasting--ml--model.streamlit.app-c9a84c?style=for-the-badge&logo=streamlit&logoColor=080a12)](https://time-series-forecasting-ml-model.streamlit.app/)
 
-# 2. Install dependencies
-pip install -r requirements.txt
+**[https://time-series-forecasting-ml-model.streamlit.app/](https://time-series-forecasting-ml-model.streamlit.app/)**
 
-# 3. Train all 100 models  (skip if .joblib files already exist)
-python main.py
+</div>
 
-# 4. Launch dashboard
-python -m streamlit run app.py
-
-# 5. (Optional) Launch REST API
-uvicorn server:app --reload
-```
-
-### Dependencies
-
-| Package | Purpose |
-|---|---|
-| `streamlit` | Web dashboard |
-| `prophet` | Time-series forecasting |
-| `pandas` | Data manipulation |
-| `joblib` | Model serialisation |
-| `matplotlib` | Evaluation plots |
-| `numpy` | Numerical utilities |
-| `fastapi` | REST API framework |
-| `pydantic` | Request validation |
+> The Streamlit Cloud deployment includes all 100 pre-trained Prophet models and the full 7-tab dashboard. No local installation needed.
 
 ---
 
