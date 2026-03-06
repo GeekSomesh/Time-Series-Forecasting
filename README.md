@@ -1,23 +1,17 @@
 <div align="center">
 
-### **[Live App — time-series-forecasting-ml-model.streamlit.app](https://time-series-forecasting-ml-model.streamlit.app/)**
-
-[![Live Demo](https://img.shields.io/badge/Open%20Live%20App-time--series--forecasting--ml--model.streamlit.app-c9a84c?style=for-the-badge&logo=streamlit&logoColor=080a12)](https://time-series-forecasting-ml-model.streamlit.app/)
-
----
-
 # TIME SERIES
 ### FORECASTING & INVENTORY INTELLIGENCE
 
 **Prophet-powered multi-store demand forecasting — Streamlit dashboard · FastAPI REST service · automated training pipeline**
+
+**Live App:** [time-series-forecasting-ml-model.streamlit.app](https://time-series-forecasting-ml-model.streamlit.app/)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-1a1a2e?style=flat-square&logo=python&logoColor=c9a84c)
 ![Prophet](https://img.shields.io/badge/Prophet-1.1-1a1a2e?style=flat-square&logo=meta&logoColor=c9a84c)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.x-1a1a2e?style=flat-square&logo=streamlit&logoColor=c9a84c)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.x-1a1a2e?style=flat-square&logo=fastapi&logoColor=c9a84c)
 ![License](https://img.shields.io/badge/License-MIT-1a1a2e?style=flat-square)
-
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit%20App-c9a84c?style=for-the-badge&logo=streamlit&logoColor=080a12)](https://time-series-forecasting-ml-model.streamlit.app/)
 
 </div>
 
