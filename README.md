@@ -1,30 +1,15 @@
 <div align="center">
 
-<br/>
+# TIME SERIES
+### FORECASTING & INVENTORY INTELLIGENCE
 
-```
-████████╗██╗███╗   ███╗███████╗    ███████╗███████╗██████╗ ██╗███████╗███████╗
-╚══██╔══╝██║████╗ ████║██╔════╝    ██╔════╝██╔════╝██╔══██╗██║██╔════╝██╔════╝
-   ██║   ██║██╔████╔██║█████╗      ███████╗█████╗  ██████╔╝██║█████╗  ███████╗
-   ██║   ██║██║╚██╔╝██║██╔══╝      ╚════██║██╔══╝  ██╔══██╗██║██╔══╝  ╚════██║
-   ██║   ██║██║ ╚═╝ ██║███████╗    ███████║███████╗██║  ██║██║███████╗███████║
-   ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝    ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝
-
-          F O R E C A S T I N G   &   I N V E N T O R Y   I N T E L L I G E N C E
-```
-
-<br/>
-
-**Prophet-powered multi-store demand forecasting with a full-stack architecture —**
-**interactive Streamlit dashboard · REST API · automated training pipeline**
-
-<br/>
+**Prophet-powered multi-store demand forecasting — Streamlit dashboard · FastAPI REST service · automated training pipeline**
 
 ![Python](https://img.shields.io/badge/Python-3.10+-1a1a2e?style=flat-square&logo=python&logoColor=c9a84c)
 ![Prophet](https://img.shields.io/badge/Prophet-1.1-1a1a2e?style=flat-square&logo=meta&logoColor=c9a84c)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.x-1a1a2e?style=flat-square&logo=streamlit&logoColor=c9a84c)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.x-1a1a2e?style=flat-square&logo=fastapi&logoColor=c9a84c)
-![License](https://img.shields.io/badge/License-MIT-1a1a2e?style=flat-square&logoColor=c9a84c)
+![License](https://img.shields.io/badge/License-MIT-1a1a2e?style=flat-square)
 
 </div>
 
@@ -33,7 +18,7 @@
 ## Table of Contents
 
 1. [Project Overview](#1-project-overview)
-2. [Architecture & Workflow](#2-architecture--workflow)
+2. [System Architecture](#2-system-architecture)
 3. [Repository Structure](#3-repository-structure)
 4. [Dataset](#4-dataset)
 5. [Feature Engineering](#5-feature-engineering)
@@ -41,157 +26,83 @@
 7. [Training Pipeline](#7-training-pipeline)
 8. [Streamlit Dashboard](#8-streamlit-dashboard)
 9. [REST API — FastAPI](#9-rest-api--fastapi)
-10. [Evaluation](#10-evaluation)
-11. [Installation & Setup](#11-installation--setup)
-12. [Usage Guide](#12-usage-guide)
-13. [Model Inventory](#13-model-inventory)
-14. [Key Results & Insights](#14-key-results--insights)
-15. [Tech Stack](#15-tech-stack)
+10. [Installation & Setup](#10-installation--setup)
+11. [Usage Guide](#11-usage-guide)
+12. [Model Inventory](#12-model-inventory)
+13. [Key Insights](#13-key-insights)
+14. [Tech Stack](#14-tech-stack)
 
 ---
 
 ## 1. Project Overview
 
-This project delivers an **end-to-end time-series demand forecasting system** for a multi-store, multi-product retail warehouse environment. It trains an individual **Facebook Prophet** model per store–product pair (100 models total), persists them as serialised artefacts, and exposes predictions through two consumer interfaces: a polished **Streamlit web dashboard** and a production-grade **FastAPI REST service**.
-
-### Core capabilities
+An **end-to-end time-series demand forecasting system** for a multi-store, multi-product retail warehouse. It trains one **Facebook Prophet** model per store–product pair (100 models total), serialises them as `.joblib` artefacts, and exposes predictions through a **Streamlit dashboard** and a **FastAPI REST API**.
 
 | Capability | Description |
 |---|---|
-| Per-pair forecasting | One dedicated Prophet model per store × product combination |
-| Horizon flexibility | 7-day, 30-day, or arbitrary date lookups up to 4 years ahead |
-| Trend intelligence | Automatic rise / drop / stable classification over any horizon |
-| Inventory planning | Computes recommended stock levels with peak and daily averages |
-| Portfolio scanning | Batch trend analysis across all 100 store-product pairs |
-| Comparative analysis | Side-by-side forecast comparison for two products in the same store |
-| Restock alerts | Threshold-based alerting for under-performing inventory pairs |
-| REST API | Full FastAPI service mirroring all dashboard capabilities |
+| Per-pair forecasting | One dedicated Prophet model per store × product |
+| Horizon flexibility | 7-day, 30-day, or any date up to 4 years ahead |
+| Trend intelligence | Auto rise / drop / stable classification |
+| Inventory planning | Recommended stock with peak and daily averages |
+| Portfolio scanning | Batch trend scan across all 100 pairs |
+| Product comparison | Side-by-side forecast for two products |
+| Restock alerts | Threshold-based alerting for low-demand pairs |
+| REST API | FastAPI service mirroring all dashboard features |
 
 ---
 
-## 2. Architecture & Workflow
+## 2. System Architecture
 
+### High-level flow
+
+```mermaid
+flowchart TD
+    A[("retail_warehouse_inventory_dataset.csv\n73,100 rows · 22 columns")] --> B["data_loader.py\nload_data()"]
+    B --> C["preprocessing.py\nprepare_time_series()"]
+    C --> D["forecasting.py\nfit_prophet()"]
+    D --> E["train.py\ntrain_models()\n100 store-product pairs"]
+    E --> F[("models/prophet_models/\n100 × .joblib files")]
+    F --> G["app.py\nStreamlit Dashboard"]
+    F --> H["server.py\nFastAPI REST API"]
+    F --> I["evaluate.py\nVisual Evaluation"]
+
+    style A fill:#0d0f1c,stroke:#c9a84c,color:#dde1f0
+    style F fill:#0d0f1c,stroke:#c9a84c,color:#dde1f0
+    style G fill:#141726,stroke:#4a9eff,color:#dde1f0
+    style H fill:#141726,stroke:#4a9eff,color:#dde1f0
+    style I fill:#141726,stroke:#4caf81,color:#dde1f0
 ```
-╔══════════════════════════════════════════════════════════════════════════════════╗
-║                    SYSTEM ARCHITECTURE — DEMAND FORECASTING                    ║
-╚══════════════════════════════════════════════════════════════════════════════════╝
 
-  ┌─────────────────────────────────────────────────────────────────────────────┐
-  │  LAYER 0 — DATA INGESTION                                                   │
-  │                                                                             │
-  │   retail_warehouse_inventory_dataset.csv                                    │
-  │         │                                                                   │
-  │         ▼                                                                   │
-  │   ┌─────────────┐    parse_dates=["Date"]    ┌──────────────────────────┐  │
-  │   │ data_loader │ ─────────────────────────► │  pandas DataFrame        │  │
-  │   │  .py        │                            │  73,100 rows × 22 cols   │  │
-  │   └─────────────┘                            └──────────────────────────┘  │
-  └─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-  ┌─────────────────────────────────────────────────────────────────────────────┐
-  │  LAYER 1 — PREPROCESSING & FEATURE ENGINEERING                             │
-  │                                                                             │
-  │   preprocessing.py :: prepare_time_series(df, store_id, product_id)        │
-  │                                                                             │
-  │   ┌──────────────────────────────────────────────────────────────────────┐ │
-  │   │  Filter by Store ID + Product ID                                     │ │
-  │   │         │                                                            │ │
-  │   │         ▼                                                            │ │
-  │   │  Group by Date → aggregate Units Sold (sum)                         │ │
-  │   │         │                                                            │ │
-  │   │         ▼                                                            │ │
-  │   │  Resample to daily frequency ('D')                                   │ │
-  │   │         │                                                            │ │
-  │   │         ▼                                                            │ │
-  │   │  Fill missing dates with 0 (asfreq)                                 │ │
-  │   │         │                                                            │ │
-  │   │         ▼                                                            │ │
-  │   │  Rename: Date → ds,  Units Sold → y   (Prophet format)              │ │
-  │   └──────────────────────────────────────────────────────────────────────┘ │
-  │                                                                             │
-  │   Notebook EDA also adds:  day · month · year · day_of_week · is_weekend   │
-  │                            week_of_year · quarter                           │
-  └─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-  ┌─────────────────────────────────────────────────────────────────────────────┐
-  │  LAYER 2 — MODEL TRAINING                                                   │
-  │                                                                             │
-  │   main.py  ──►  train.py :: train_models()                                 │
-  │                                                                             │
-  │   for each (Store, Product) pair — 5 × 20 = 100 combos                    │
-  │                                                                             │
-  │   ┌────────────────────────────────────────────────────────────────────┐   │
-  │   │                                                                    │   │
-  │   │   prepare_time_series()                                            │   │
-  │   │          │                                                         │   │
-  │   │          ▼                                                         │   │
-  │   │   forecasting.py :: fit_prophet(ts)                                │   │
-  │   │          │                                                         │   │
-  │   │          │   Prophet(                                              │   │
-  │   │          │     yearly_seasonality  = True,                        │   │
-  │   │          │     weekly_seasonality  = True,                        │   │
-  │   │          │     daily_seasonality   = False,                       │   │
-  │   │          │   ).fit(ts)                                             │   │
-  │   │          │                                                         │   │
-  │   │          ▼                                                         │   │
-  │   │   joblib.dump → "models/prophet_models/{S}_{P}_prophet.joblib"    │   │
-  │   │                                                                    │   │
-  │   └────────────────────────────────────────────────────────────────────┘   │
-  │                                                                             │
-  │   Output: 100 .joblib model files  (S001–S005 × P0001–P0020)               │
-  └─────────────────────────────────────────────────────────────────────────────┘
-                         │                              │
-                         ▼                              ▼
-  ┌────────────────────────────┐        ┌───────────────────────────────────────┐
-  │  LAYER 3A — EVALUATION     │        │  LAYER 3B — INFERENCE SERVING         │
-  │                            │        │                                       │
-  │  evaluate.py               │        │  ┌──────────────────────────────────┐ │
-  │                            │        │  │  app.py  — Streamlit Dashboard   │ │
-  │  • Load each .joblib       │        │  │                                  │ │
-  │  • make_future_dataframe   │        │  │  Tab 1  Demand Forecast          │ │
-  │    (periods=30)            │        │  │  Tab 2  Trend Detection          │ │
-  │  • model.predict(future)   │        │  │  Tab 3  Inventory Planning       │ │
-  │  • model.plot(forecast)    │        │  │  Tab 4  Date Forecast            │ │
-  │    → matplotlib figure     │        │  │  Tab 5  Portfolio Analysis       │ │
-  │                            │        │  │  Tab 6  Product Comparison       │ │
-  └────────────────────────────┘        │  │  Tab 7  Restock Alerts           │ │
-                                        │  └──────────────────────────────────┘ │
-                                        │                                       │
-                                        │  ┌──────────────────────────────────┐ │
-                                        │  │  server.py — FastAPI REST API    │ │
-                                        │  │                                  │ │
-                                        │  │  POST /predict-units/            │ │
-                                        │  │  POST /detect-trend/             │ │
-                                        │  │  POST /recommend-stock/          │ │
-                                        │  │  POST /forecast-date/            │ │
-                                        │  │  GET  /trend-analysis/           │ │
-                                        │  └──────────────────────────────────┘ │
-                                        └───────────────────────────────────────┘
+### Preprocessing pipeline
 
-  ─────────────────────────────────────────────────────────────────────────────
-  INFERENCE FLOW (per request)
+```mermaid
+flowchart LR
+    A["Raw DataFrame"] --> B["Filter\nStore ID + Product ID"]
+    B --> C["groupby Date\nsum Units Sold"]
+    C --> D["resample D\nfill gaps with 0"]
+    D --> E["Rename\nDate → ds\nUnits Sold → y"]
+    E --> F["Prophet-ready\ntime series"]
 
-   User selects   ──►  load_model(store, product)       joblib.load(.joblib)
-   Store + Product
-        │
-        ▼
-   make_future_dataframe(periods=N)  ──►  model.predict(future)
-        │                                        │
-        │          ┌──────────────────────────────┤
-        │          │  forecast DataFrame          │
-        │          │  ds · yhat · yhat_lower ·    │
-        │          │  yhat_upper · trend ·        │
-        │          │  weekly · yearly             │
-        │          └──────────────────────────────┘
-        ▼
-   Post-processing:
-     • chart_df      → st.line_chart()
-     • total / avg   → metric boxes
-     • diff.mean()   → trend classification (rise / drop / stable)
-     • yhat.sum()    → recommended inventory
-  ─────────────────────────────────────────────────────────────────────────────
+    style F fill:#0d0f1c,stroke:#c9a84c,color:#dde1f0
+```
+
+### Inference flow (per request)
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant App as Streamlit / FastAPI
+    participant M as joblib Model
+    participant P as Prophet
+
+    U->>App: Select Store + Product + Horizon
+    App->>M: joblib.load(store_product_prophet.joblib)
+    M-->>App: Trained Prophet model
+    App->>P: make_future_dataframe(periods=N)
+    P-->>App: Future dates DataFrame
+    App->>P: model.predict(future)
+    P-->>App: forecast [ds, yhat, yhat_lower, yhat_upper]
+    App-->>U: Chart + Metric cards
 ```
 
 ---
@@ -200,206 +111,122 @@ This project delivers an **end-to-end time-series demand forecasting system** fo
 
 ```
 Time-Series-Forecasting/
-│
-├── app.py                          Streamlit dashboard (7-tab UI)
-├── server.py                       FastAPI REST service
-├── main.py                         Training + evaluation entry point
-├── requirements.txt                Python dependencies
+├── app.py                    Streamlit dashboard (7-tab UI)
+├── server.py                 FastAPI REST service
+├── main.py                   Training + evaluation entry point
+├── requirements.txt
 │
 ├── data/
-│   └── retail_warehouse_inventory_dataset.csv   73,100-row retail dataset
+│   └── retail_warehouse_inventory_dataset.csv
 │
 ├── models/
 │   └── prophet_models/
 │       ├── S001_P0001_prophet.joblib
-│       ├── S001_P0002_prophet.joblib
-│       ├── ...                     (100 .joblib files — S001–S005 × P0001–P0020)
-│       └── S005_P0020_prophet.joblib
+│       └── ...               (100 files total)
 │
 ├── notebooks/
-│   └── EDA_and_Feature_Engineering.ipynb    Exploratory analysis notebook
+│   └── EDA_and_Feature_Engineering.ipynb
 │
 └── src/
-    ├── __init__.py
-    ├── data_loader.py              load_data() — CSV → DataFrame
-    ├── preprocessing.py            prepare_time_series() — filter/resample/format
-    ├── forecasting.py              fit_prophet() — Prophet model constructor
-    ├── train.py                    train_models() — batch training loop
-    ├── evaluate.py                 evaluate_models() — forecast + plot loop
-    └── utils.py                    set_seed() — reproducibility helper
+    ├── data_loader.py        load_data()
+    ├── preprocessing.py      prepare_time_series()
+    ├── forecasting.py        fit_prophet()
+    ├── train.py              train_models()
+    ├── evaluate.py           evaluate_models()
+    └── utils.py              set_seed()
 ```
 
 ---
 
 ## 4. Dataset
 
-### Source file
-`data/retail_warehouse_inventory_dataset.csv`
-
-### Dimensions
+**File:** `data/retail_warehouse_inventory_dataset.csv`
 
 | Attribute | Value |
 |---|---|
-| Total rows | 73,100 |
-| Total columns | 22 |
-| Stores | 5 (`S001` – `S005`) |
-| Products | 20 (`P0001` – `P0020`) |
-| Date range | 2022-01-01 → 2024-01-01 (2 years) |
+| Rows | 73,100 |
+| Columns | 22 |
+| Stores | 5 (S001 – S005) |
+| Products | 20 (P0001 – P0020) |
+| Date range | 2022-01-01 → 2024-01-01 |
 | Granularity | Daily per store-product pair |
-| Missing values | None (0 nulls across all columns) |
+| Missing values | None |
 
-### Column Reference
+### Columns
 
 | Column | Type | Description |
 |---|---|---|
 | `Date` | datetime | Transaction date |
-| `Store ID` | categorical | Store identifier (S001–S005) |
-| `Product ID` | categorical | Product identifier (P0001–P0020) |
-| `Category` | categorical | Product category |
-| `Region` | categorical | Geographic region |
+| `Store ID` | string | Store identifier |
+| `Product ID` | string | Product identifier |
+| `Category` | string | Groceries · Toys · Electronics · Furniture · Clothing |
+| `Region` | string | North · South · East · West |
 | `Inventory Level` | int | Current stock on hand |
-| `Units Sold` | int | **Target variable** — daily units sold |
-| `Units Ordered` | int | Replenishment order quantity |
+| `Units Sold` | int | **Target variable** |
+| `Units Ordered` | int | Replenishment quantity |
 | `Demand Forecast` | float | Pre-existing baseline forecast |
-| `Price` | float | Unit selling price (USD) |
-| `Discount` | int | Discount percentage applied |
-| `Weather Condition` | categorical | Ambient weather on that day |
-| `Holiday/Promotion` | int | Binary flag — 1 if holiday or promotion |
-| `Competitor Pricing` | float | Competing store price (USD) |
-| `Seasonality` | categorical | Seasonal label |
-| `day` | int | Day of month (1–31) |
-| `month` | int | Month number (1–12) |
-| `year` | int | Year (2022–2024) |
-| `day_of_week` | int | Weekday index (0=Monday, 6=Sunday) |
-| `is_weekend` | int | Binary flag — 1 if Saturday or Sunday |
-| `week_of_year` | int | ISO week number (1–52) |
+| `Price` | float | Unit price (USD) |
+| `Discount` | int | Discount % applied |
+| `Weather Condition` | string | Sunny · Rainy · Cloudy · Snowy |
+| `Holiday/Promotion` | int | 1 if holiday or promotion |
+| `Competitor Pricing` | float | Competitor store price (USD) |
+| `Seasonality` | string | Spring · Summer · Autumn · Winter |
+| `day` | int | Day of month |
+| `month` | int | Month number |
+| `year` | int | Year |
+| `day_of_week` | int | 0 = Monday … 6 = Sunday |
+| `is_weekend` | int | 1 if Sat or Sun |
+| `week_of_year` | int | ISO week (1–52) |
 | `quarter` | int | Calendar quarter (1–4) |
 
-### Categorical Value Reference
+### Descriptive statistics
 
-```
-┌─────────────────────┬──────────────────────────────────────────────────────┐
-│  Column             │  Values                                              │
-├─────────────────────┼──────────────────────────────────────────────────────┤
-│  Category           │  Groceries · Toys · Electronics · Furniture ·        │
-│                     │  Clothing                                             │
-├─────────────────────┼──────────────────────────────────────────────────────┤
-│  Region             │  North · South · East · West                         │
-├─────────────────────┼──────────────────────────────────────────────────────┤
-│  Weather Condition  │  Sunny · Rainy · Cloudy · Snowy                      │
-├─────────────────────┼──────────────────────────────────────────────────────┤
-│  Seasonality        │  Spring · Summer · Autumn · Winter                   │
-└─────────────────────┴──────────────────────────────────────────────────────┘
-```
+| Column | Min | Mean | Max | Std |
+|---|---|---|---|---|
+| Inventory Level | 50 | 274.5 | 500 | 129.9 |
+| **Units Sold** | 0 | **136.5** | 499 | 108.9 |
+| Units Ordered | 20 | 110.0 | 200 | 52.3 |
+| Price (USD) | 10.00 | 55.14 | 100.00 | 26.0 |
+| Discount (%) | 0 | 10.0 | 20 | 7.1 |
+| Competitor Pricing | 5.03 | 55.15 | 104.94 | 26.2 |
 
-### Descriptive Statistics
+### Coverage map
 
-| Column | Min | Mean | Median | Max | Std Dev |
-|---|---|---|---|---|---|
-| Inventory Level | 50 | 274.5 | 273 | 500 | 129.9 |
-| **Units Sold** | 0 | **136.5** | 107 | 499 | 108.9 |
-| Units Ordered | 20 | 110.0 | 110 | 200 | 52.3 |
-| Demand Forecast | -9.99 | 141.5 | 113 | 518.6 | 109.3 |
-| Price (USD) | 10.00 | 55.14 | 55.05 | 100.00 | 26.0 |
-| Discount (%) | 0 | 10.0 | 10 | 20 | 7.1 |
-| Competitor Pricing (USD) | 5.03 | 55.15 | 55.01 | 104.94 | 26.2 |
-
-### Dataset chart — Units Sold distribution
-
-```
-  Units Sold — approximate frequency distribution   (73,100 records)
-
-  0  ┤
-     │███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
- 50  ┤
-     │████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-100  ┤
-     │██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ← mean ~137
-150  ┤
-     │████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-200  ┤
-     │██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-250  ┤
-     │███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-300  ┤
-     │████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-350+ ┤
-     │████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-     └──────────────────────────────────────────────────
-      Right-skewed distribution — high variance across pairs
-```
-
-### Dataset chart — Coverage by store and product
-
-```
-  Store × Product Grid  (each cell = daily observations over 2 years)
-
-          P001  P002  P003  P004  P005  P006  P007  P008  P009  P010  ··  P020
-  S001  [████][████][████][████][████][████][████][████][████][████]··[████]
-  S002  [████][████][████][████][████][████][████][████][████][████]··[████]
-  S003  [████][████][████][████][████][████][████][████][████][████]··[████]
-  S004  [████][████][████][████][████][████][████][████][████][████]··[████]
-  S005  [████][████][████][████][████][████][████][████][████][████]··[████]
-
-  ████ = complete 2-year daily series (730 rows per cell), no gaps, no nulls
-  Total cells: 100   Total rows: 73,100   Completeness: 100%
+```mermaid
+xychart-beta
+    title "Rows per Store (73,100 total — perfectly balanced)"
+    x-axis [S001, S002, S003, S004, S005]
+    y-axis "Row count" 0 --> 16000
+    bar [14620, 14620, 14620, 14620, 14620]
 ```
 
 ---
 
 ## 5. Feature Engineering
 
-Feature engineering is performed in two places: the **preprocessing module** (runtime, for Prophet input) and the **EDA notebook** (analytical, columnar features appended to the raw dataset).
+### Runtime — `src/preprocessing.py`
 
-### Runtime preprocessing — `src/preprocessing.py`
-
-```
-Raw DataFrame
-      │
-      ├─ Filter rows where Store ID == store_id AND Product ID == product_id
-      │
-      ├─ groupby('Date')['Units Sold'].sum()
-      │         Aggregates multiple rows on the same date into a single daily figure
-      │
-      ├─ .resample('D').sum()
-      │         Ensures daily frequency; sums any remaining duplicates
-      │
-      ├─ .reset_index()
-      │
-      ├─ .set_index('ds').asfreq('D', fill_value=0).reset_index()
-      │         Inserts any missing calendar days as 0-demand entries
-      │         Guarantees a continuous, gap-free time series for Prophet
-      │
-      └─ Output: DataFrame with columns [ds, y]
-                 ds = date (datetime64)
-                 y  = units sold (int)
+```mermaid
+flowchart TD
+    A["Raw DataFrame\n73,100 rows"] --> B["Filter by Store ID\n& Product ID"]
+    B --> C["groupby Date\nsum Units Sold"]
+    C --> D["resample Daily\n.sum()"]
+    D --> E["asfreq D\nfill_value=0\n(close date gaps)"]
+    E --> F["Rename columns\nDate→ds · Units Sold→y"]
+    F --> G["Output: ds, y\nProphet-ready series"]
 ```
 
 ### Notebook analytical features — `EDA_and_Feature_Engineering.ipynb`
 
-| Feature | Derivation | Value range | Purpose |
-|---|---|---|---|
-| `day` | `Date.dt.day` | 1–31 | Intra-month demand position |
-| `month` | `Date.dt.month` | 1–12 | Monthly seasonality |
-| `year` | `Date.dt.year` | 2022–2024 | Inter-year trend direction |
-| `day_of_week` | `Date.dt.dayofweek` | 0–6 | Mon–Sun demand cycles |
-| `is_weekend` | `day_of_week >= 5` | 0 or 1 | Weekend sales uplift flag |
-| `week_of_year` | `Date.dt.isocalendar().week` | 1–52 | 52-week seasonal pattern |
-| `quarter` | `Date.dt.quarter` | 1–4 | Quarterly business cycles |
-
-### Seasonality map
-
-```
-  Quarter → Season mapping observed in dataset
-
-  Q1  (Jan–Mar)  →  Winter  ·  Spring
-  Q2  (Apr–Jun)  →  Spring  ·  Summer
-  Q3  (Jul–Sep)  →  Summer  ·  Autumn
-  Q4  (Oct–Dec)  →  Autumn  ·  Winter
-
-  Weather distribution:  Sunny · Rainy · Cloudy · Snowy
-  Promotion events:      ~50% of days flagged as Holiday/Promotion = 1
-```
+| Feature | Derivation | Purpose |
+|---|---|---|
+| `day` | `Date.dt.day` | Intra-month position |
+| `month` | `Date.dt.month` | Monthly seasonality |
+| `year` | `Date.dt.year` | Trend direction |
+| `day_of_week` | `Date.dt.dayofweek` | Weekly cycles |
+| `is_weekend` | `day_of_week >= 5` | Weekend uplift |
+| `week_of_year` | ISO week | 52-week pattern |
+| `quarter` | `Date.dt.quarter` | Quarterly cycles |
 
 ---
 
@@ -407,374 +234,145 @@ Raw DataFrame
 
 ### Why Prophet?
 
-Facebook Prophet is particularly well-suited to this problem because it:
+- Native multi-seasonality (weekly + yearly) — no manual lag engineering
+- Robust to missing values and outliers
+- Built-in uncertainty intervals (`yhat_lower`, `yhat_upper`)
+- Scales cleanly across 100 independent training runs
+- Interpretable decomposition: Trend · Weekly · Yearly
 
-- Handles **multiple seasonalities** natively (weekly + yearly) without manual lag engineering
-- Is **robust to missing data and outliers** — critical for retail time series
-- Provides **uncertainty intervals** (`yhat_lower`, `yhat_upper`) out of the box
-- Scales cleanly to a **batch training loop** across 100 store-product pairs
-- Produces interpretable **trend + seasonality decomposition** plots
-- The additive model structure prevents negative-forecast artefacts seen in the raw dataset's baseline Demand Forecast column
-
-### Model configuration — `src/forecasting.py`
+### Configuration
 
 ```python
+# src/forecasting.py
 Prophet(
-    yearly_seasonality = True,   # captures annual demand patterns (holiday spikes etc.)
-    weekly_seasonality = True,   # captures Mon–Sun demand cycles
-    daily_seasonality  = False,  # disabled — no sub-day signal at daily grain
+    yearly_seasonality = True,   # annual demand cycles
+    weekly_seasonality = True,   # Mon–Sun sales pattern
+    daily_seasonality  = False,  # no sub-day signal at daily grain
 )
 ```
 
-### Prophet decomposition
+### Additive decomposition
 
-```
-  Observed signal  =  Trend  +  Weekly seasonality  +  Yearly seasonality  +  Noise
-
-  ┌────────────┐     ┌─────────────────────────────────────────────────────────┐
-  │  Trend     │     │  Long-run direction (growth / decline) over 2 years     │
-  │  Component │     │  Captures gradual demand drift per store-product pair   │
-  └────────────┘     └─────────────────────────────────────────────────────────┘
-
-  ┌────────────┐     ┌─────────────────────────────────────────────────────────┐
-  │  Weekly    │     │  Mon  Tue  Wed  Thu  Fri  Sat  Sun                      │
-  │  Seasonal  │     │  ▂▂▂  ▃▃▃  ▅▅▅  ▄▄▄  ███  ██   ▂▂▂   (illustrative)   │
-  └────────────┘     └─────────────────────────────────────────────────────────┘
-
-  ┌────────────┐     ┌─────────────────────────────────────────────────────────┐
-  │  Yearly    │     │  Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec │
-  │  Seasonal  │     │  ▅▅   ▄▄   ▃▃   ▃▃   ▄▄   ▅▅   ██   ███  ██   ▅▅   ▄▄   ▅▅ │
-  └────────────┘     └─────────────────────────────────────────────────────────┘
-
-  ┌────────────┐     ┌─────────────────────────────────────────────────────────┐
-  │  Forecast  │     │  yhat         — point estimate                          │
-  │  Output    │     │  yhat_lower   — 80% confidence lower bound              │
-  │            │     │  yhat_upper   — 80% confidence upper bound              │
-  └────────────┘     └─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    A["Observed\nSignal"] --> B["Trend\nlong-run direction"]
+    A --> C["Weekly\nMon–Sun cycle"]
+    A --> D["Yearly\n12-month pattern"]
+    A --> E["Noise\nresidual"]
+    B & C & D & E --> F["yhat\npoint forecast"]
+    F --> G["yhat_lower\npessimistic bound"]
+    F --> H["yhat_upper\noptimistic bound"]
 ```
 
-### Prophet output columns used in this project
+### Forecast output columns
 
-| Column | Description | Where used |
+| Column | Description | Used for |
 |---|---|---|
-| `ds` | Forecast date | Chart x-axis index |
-| `yhat` | Point forecast | All predictions, metrics, line charts |
-| `yhat_lower` | Lower confidence bound | Date Forecast tab — pessimistic bound |
-| `yhat_upper` | Upper confidence bound | Date Forecast tab — optimistic bound |
-| `trend` | Long-run trend component | Internal decomposition |
-| `weekly` | Weekly seasonality component | Internal decomposition |
-| `yearly` | Yearly seasonality component | Internal decomposition |
-
-### Model storage
-
-```
-models/prophet_models/
-├── {STORE_ID}_{PRODUCT_ID}_prophet.joblib
-│
-├── S001_P0001_prophet.joblib
-├── S001_P0002_prophet.joblib
-│   ...
-├── S005_P0019_prophet.joblib
-└── S005_P0020_prophet.joblib
-```
-
-100 serialised models, loaded on-demand via `joblib.load()`. No model is held in memory until explicitly requested.
+| `ds` | Date | Chart x-axis |
+| `yhat` | Point forecast | All predictions |
+| `yhat_lower` | Lower confidence bound | Date forecast tab |
+| `yhat_upper` | Upper confidence bound | Date forecast tab |
+| `trend` | Trend component | Decomposition |
+| `weekly` | Weekly component | Decomposition |
+| `yearly` | Yearly component | Decomposition |
 
 ---
 
 ## 7. Training Pipeline
 
-### Entry point
+```mermaid
+flowchart TD
+    A["python main.py"] --> B["makedirs\nmodels/prophet_models/"]
+    B --> C["train_models()\nsrc/train.py"]
+    C --> D["load_data()"]
+    D --> E["100 unique\nStore × Product pairs"]
+    E --> F["prepare_time_series()\nds, y format"]
+    F --> G["fit_prophet(ts)\nProphet.fit()"]
+    G --> H[("joblib.dump()\n{store}_{product}_prophet.joblib")]
+    H --> I{"All 100\ndone?"}
+    I -- No --> E
+    I -- Yes --> J["evaluate_models()\nsrc/evaluate.py"]
+    J --> K["model.plot(forecast)\nmatplotlib figure per pair"]
 
+    style H fill:#0d0f1c,stroke:#c9a84c,color:#dde1f0
+```
+
+**Run with:**
 ```bash
 python main.py
-```
-
-### Flow diagram
-
-```
-  main.py
-    │
-    ├─ os.makedirs("models/prophet_models", exist_ok=True)
-    │
-    ├──────────────────────────────────────────────────────────────────────────
-    │  PHASE 1 — TRAINING   (src/train.py :: train_models)
-    │
-    │   load_data("data/retail_warehouse_inventory_dataset.csv")
-    │         │
-    │         ▼
-    │   df[['Store ID','Product ID']].drop_duplicates()
-    │         │
-    │         ▼
-    │   ┌───────────────────────────────────────────────────────────────┐
-    │   │  for (store, product) in 100 unique pairs:                    │
-    │   │                                                               │
-    │   │    ts = prepare_time_series(df, store, product)               │
-    │   │         → [ds, y] with daily frequency, no gaps               │
-    │   │                                                               │
-    │   │    model = fit_prophet(ts)                                    │
-    │   │         → Prophet(yearly=T, weekly=T, daily=F).fit(ts)        │
-    │   │                                                               │
-    │   │    joblib.dump(model, f"models/.../{store}_{product}_prophet.joblib")
-    │   │                                                               │
-    │   │    print(f"Trained Prophet for {store}-{product}")            │
-    │   └───────────────────────────────────────────────────────────────┘
-    │
-    ├──────────────────────────────────────────────────────────────────────────
-    │  PHASE 2 — EVALUATION   (src/evaluate.py :: evaluate_models)
-    │
-    │   for fname in os.listdir("models/prophet_models"):
-    │         │
-    │         ▼
-    │     joblib.load(model)
-    │     make_future_dataframe(periods=30)
-    │     model.predict(future)
-    │     model.plot(forecast)   → matplotlib figure per pair
-    │
-    └──────────────────────────────────────────────────────────────────────────
-
-  Output: 100 trained .joblib files  +  matplotlib evaluation charts
 ```
 
 ---
 
 ## 8. Streamlit Dashboard
 
-### Launch
-
+**Launch:**
 ```bash
 python -m streamlit run app.py
+# → http://localhost:8501
 ```
 
-Navigate to `http://localhost:8501`
+The UI has 7 tabs:
 
-The dashboard is organised into **7 navigation tabs**:
-
----
-
-### Tab 1 — Demand Forecast
-
-**Business question:** How many units will be sold over the next 7 or 30 days?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Store (select)  ·  Product (select)  ·  Horizon: 7 Days | 30 Days        │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  load_model → make_future_dataframe(N) → predict → tail(N)                │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUTS                                                                   │
-  │                                                                            │
-  │  Line chart — daily yhat  [gold gradient line over horizon]                │
-  │                                                                            │
-  │  ┌──────────────────┐  ┌──────────────────┐                               │
-  │  │ Total Forecast   │  │ Daily Average    │                               │
-  │  │   4,182 units    │  │   139.4 u/day    │                               │
-  │  └──────────────────┘  └──────────────────┘                               │
-  └────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    Nav["Streamlit\nDashboard"] --> T1["Tab 1\nDemand Forecast"]
+    Nav --> T2["Tab 2\nTrend Detection"]
+    Nav --> T3["Tab 3\nInventory Planning"]
+    Nav --> T4["Tab 4\nDate Forecast"]
+    Nav --> T5["Tab 5\nPortfolio Analysis"]
+    Nav --> T6["Tab 6\nProduct Comparison"]
+    Nav --> T7["Tab 7\nRestock Alerts"]
 ```
 
----
+### Tab descriptions
 
-### Tab 2 — Trend Detection
-
-**Business question:** Is demand rising, falling, or stable?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Store (select)  ·  Product (select)  ·  Horizon slider: 7–60 days        │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  forecast.tail(N)['yhat'].diff().mean()  →  change                        │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUTS                                                                   │
-  │                                                                            │
-  │  Line chart — demand trajectory (blue line)                                │
-  │                                                                            │
-  │  ┌────────────────────────────────────────────────────────────────────┐   │
-  │  │  Demand is expected to RISE by an average of 2.41 units/day       │   │
-  │  │  over the next 30 days.                                            │   │
-  │  └────────────────────────────────────────────────────────────────────┘   │
-  │  [ green banner for rise · amber banner for drop · blue for stable ]      │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Tab 3 — Inventory Planning
-
-**Business question:** How much stock should be ordered for next month?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Store (select)  ·  Product (select)                                       │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  forecast.tail(30)['yhat']  →  sum · max · mean                           │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUTS                                                                   │
-  │                                                                            │
-  │  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐              │
-  │  │ Recommended    │  │ Peak Day       │  │ Avg Daily      │              │
-  │  │ Stock (30d)    │  │ Demand         │  │ Demand         │              │
-  │  │  4,182 units   │  │  198 units     │  │  139.4 u/day   │              │
-  │  └────────────────┘  └────────────────┘  └────────────────┘              │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Tab 4 — Single-Date Forecast
-
-**Business question:** What are predicted sales on a specific future date?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Store (select)  ·  Product (select)  ·  Date picker (today → +4 years)   │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  make_future_dataframe(1460) → predict → filter ds == target_date         │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUTS                                                                   │
-  │                                                                            │
-  │  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐              │
-  │  │ Forecast       │  │ Lower Bound    │  │ Upper Bound    │              │
-  │  │ 2025-06-15     │  │ (pessimistic)  │  │ (optimistic)   │              │
-  │  │  157 units     │  │  112 units     │  │  203 units     │              │
-  │  └────────────────┘  └────────────────┘  └────────────────┘              │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Tab 5 — Portfolio Trend Analysis
-
-**Business question:** Which store-product pairs are growing or declining most strongly?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS:  none (scans all 100 pairs automatically)                         │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  iterate store_ids × product_ids → avg daily change → sort desc           │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUT                                                                    │
-  │                                                                            │
-  │  Store   │ Product  │ Avg Daily Change                                    │
-  │  ────────┼──────────┼─────────────────                                   │
-  │  S004    │ P0015    │ +3.87                                               │
-  │  S001    │ P0002    │ +2.14                                               │
-  │  S003    │ P0009    │ -0.43                                               │
-  │  S005    │ P0011    │ -1.92                                               │
-  │  ...     │ ...      │ ...                                                 │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Tab 6 — Product Comparison
-
-**Business question:** Which of two products has stronger demand in the same store?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Store (select)  ·  Product A (select)  ·  Product B (select)             │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  run both models → concat yhat series → dual overlay chart                │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUT                                                                    │
-  │                                                                            │
-  │  Dual-series line chart (colour-coded per product, 30-day horizon)         │
-  │                                                                            │
-  │  ┌──────────────────────────┐  ┌──────────────────────────┐              │
-  │  │  P0001 — Avg Daily       │  │  P0002 — Avg Daily       │              │
-  │  │        142.3 units       │  │        98.7 units        │              │
-  │  └──────────────────────────┘  └──────────────────────────┘              │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Tab 7 — Restocking Alerts
-
-**Business question:** Which store-product pairs need immediate restocking attention?
-
-```
-  ┌────────────────────────────────────────────────────────────────────────────┐
-  │  INPUTS                                                                    │
-  │  Demand threshold slider (0–100 units)                                     │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  PROCESSING                                                                │
-  │  forecast.tail(7)['yhat'].mean() < threshold  →  flag pair                │
-  ├────────────────────────────────────────────────────────────────────────────┤
-  │  OUTPUT                                                                    │
-  │                                                                            │
-  │  Alert banner:  "14 store-product pairs require restocking attention."     │
-  │                                                                            │
-  │  Store   │ Product  │ Avg Predicted Units (7d)                            │
-  │  ────────┼──────────┼──────────────────────────                          │
-  │  S002    │ P0007    │ 12.3  ← critical                                   │
-  │  S003    │ P0014    │ 28.7                                                │
-  │  ...     │ ...      │ ...                                                 │
-  └────────────────────────────────────────────────────────────────────────────┘
-```
+| Tab | Business question | Key output |
+|---|---|---|
+| **Demand Forecast** | How many units sold next 7 / 30 days? | Line chart + total & avg metric cards |
+| **Trend Detection** | Is demand rising or falling? | Trajectory chart + rise / drop / stable alert |
+| **Inventory Planning** | How much stock to order next month? | Recommended stock · peak day · avg daily cards |
+| **Date Forecast** | What are sales on a specific date? | yhat · yhat_lower · yhat_upper metric cards |
+| **Portfolio Analysis** | Which pairs are growing or declining? | Sortable table of avg daily change across all 100 pairs |
+| **Product Comparison** | Which product has stronger demand? | Dual-series overlay chart + per-product avg cards |
+| **Restock Alerts** | Which pairs need restocking now? | Filtered table of pairs below demand threshold |
 
 ---
 
 ## 9. REST API — FastAPI
 
-### Launch
-
+**Launch:**
 ```bash
 uvicorn server:app --reload
+# → http://localhost:8000/docs
 ```
 
-Interactive docs: `http://127.0.0.1:8000/docs`
+### Endpoints
 
-### Endpoint Map
-
-```
-  ┌──────────────────────────────────────────────────────────────────────────┐
-  │  FastAPI  —  Demand Forecasting REST Service                             │
-  ├──────────────┬───────────────────────────┬────────────────────────────── │
-  │  Method      │  Path                     │  Purpose                     │
-  ├──────────────┼───────────────────────────┼────────────────────────────── │
-  │  POST        │  /predict-units/          │  Day-by-day forecast          │
-  │  POST        │  /detect-trend/           │  Rise / drop / stable         │
-  │  POST        │  /recommend-stock/        │  Total inventory requirement  │
-  │  POST        │  /forecast-date/          │  Single-date prediction       │
-  │  GET         │  /trend-analysis/         │  Portfolio-wide trend scan    │
-  └──────────────┴───────────────────────────┴────────────────────────────── │
+```mermaid
+flowchart LR
+    Client["API Client"] --> E1["POST /predict-units/\nDay-by-day forecast"]
+    Client --> E2["POST /detect-trend/\nRise / drop / stable"]
+    Client --> E3["POST /recommend-stock/\nInventory total"]
+    Client --> E4["POST /forecast-date/\nSingle-date forecast"]
+    Client --> E5["GET /trend-analysis/\nPortfolio-wide scan"]
 ```
 
 ### Request / Response examples
 
-#### `POST /predict-units/`
-
+**`POST /predict-units/`**
 ```json
 // Request
-{
-  "store_id":   "S001",
-  "product_id": "P0003",
-  "period":     30
-}
+{ "store_id": "S001", "product_id": "P0003", "period": 30 }
 
 // Response
 [
   { "ds": "2024-01-02", "yhat": 143.7 },
-  { "ds": "2024-01-03", "yhat": 138.2 },
-  ...
+  { "ds": "2024-01-03", "yhat": 138.2 }
 ]
 ```
 
-#### `POST /detect-trend/`
-
+**`POST /detect-trend/`**
 ```json
 // Request
 { "store_id": "S002", "product_id": "P0007", "period": 14 }
@@ -783,8 +381,7 @@ Interactive docs: `http://127.0.0.1:8000/docs`
 { "trend": "rise", "avg_change": 2.41 }
 ```
 
-#### `POST /recommend-stock/`
-
+**`POST /recommend-stock/`**
 ```json
 // Request
 { "store_id": "S003", "product_id": "P0012", "period": 30 }
@@ -793,8 +390,7 @@ Interactive docs: `http://127.0.0.1:8000/docs`
 { "recommended_inventory": 4182 }
 ```
 
-#### `POST /forecast-date/`
-
+**`POST /forecast-date/`**
 ```json
 // Request
 { "store_id": "S001", "product_id": "P0001", "forecast_date": "2025-06-15" }
@@ -803,231 +399,158 @@ Interactive docs: `http://127.0.0.1:8000/docs`
 { "date": "2025-06-15", "predicted_units": 157.34 }
 ```
 
-#### `GET /trend-analysis/`
-
+**`GET /trend-analysis/`**
 ```json
-// Response (truncated — returns all 100 pairs sorted desc)
+// Response (all 100 pairs, sorted descending)
 [
   { "store_id": "S004", "product_id": "P0015", "avg_change": 3.87 },
-  { "store_id": "S001", "product_id": "P0002", "avg_change": 2.14 },
-  ...
+  { "store_id": "S001", "product_id": "P0002", "avg_change": 2.14 }
 ]
 ```
 
-### Pydantic schemas
-
-```python
-class ForecastRequest(BaseModel):
-    store_id:   str
-    product_id: str
-    period:     int
-
-class DateForecastRequest(BaseModel):
-    store_id:      str
-    product_id:    str
-    forecast_date: date
-
-class CompareRequest(BaseModel):
-    store_id:  str
-    productA:  str
-    productB:  str
-```
-
 ---
 
-## 10. Evaluation
-
-`evaluate.py` provides a visual evaluation loop using Prophet's native plotting:
-
-```python
-model.plot(forecast)
-```
-
-This renders a matplotlib figure per model:
-
-```
-  ┌────────────────────────────────────────────────────────────────────────┐
-  │  Forecast — S001-P0001                                                 │
-  │                                                                        │
-  │  400 ┤                                                          ·····  │
-  │      │                                           ············         │
-  │  300 ┤                       ·····················                    │
-  │      │  ●●●●●●●● ●●●●●●●●●●●●  ← observed actuals (black dots)       │
-  │  200 ┤─────────────────────────────────────────── ← yhat (blue line)  │
-  │      │░░░░░░░░░░░░░░░░░░░░░░░░░ ← uncertainty band (shaded)           │
-  │  100 ┤                                                                 │
-  │      └───────────────────────────────────────────────────────────     │
-  │        Jan 22       Jul 22       Jan 23       Jul 23       Jan 24     │
-  └────────────────────────────────────────────────────────────────────────┘
-```
-
-`model.plot_components(forecast)` produces a decomposition chart:
-
-| Panel | What it shows |
-|---|---|
-| Trend | Long-run growth or decline over the 2-year history |
-| Weekly seasonality | Mon–Sun demand pattern |
-| Yearly seasonality | Annual demand cycle (12-month pattern) |
-
----
-
-## 11. Installation & Setup
+## 10. Installation & Setup
 
 ### Prerequisites
-
-- Python 3.10 or higher
+- Python 3.10+
 - pip
 
-### Clone & install
+### Steps
 
 ```bash
+# 1. Clone
 git clone https://github.com/GeekSomesh/Time-Series-Forecasting.git
 cd Time-Series-Forecasting
+
+# 2. Install dependencies
 pip install -r requirements.txt
+
+# 3. Train all 100 models  (skip if .joblib files already exist)
+python main.py
+
+# 4. Launch dashboard
+python -m streamlit run app.py
+
+# 5. (Optional) Launch REST API
+uvicorn server:app --reload
 ```
 
 ### Dependencies
 
-| Package | Version | Purpose |
-|---|---|---|
-| `streamlit` | 1.x | Interactive web dashboard |
-| `prophet` | 1.1+ | Time-series forecasting engine |
-| `pandas` | 1.x+ | Data manipulation |
-| `joblib` | 1.x | Model serialisation / deserialisation |
-| `matplotlib` | 3.x | Forecast visualisation in evaluation |
-| `numpy` | 1.x | Numerical utilities |
-| `fastapi` | 0.x | REST API framework |
-| `pydantic` | 1.x / 2.x | API request/response validation |
+| Package | Purpose |
+|---|---|
+| `streamlit` | Web dashboard |
+| `prophet` | Time-series forecasting |
+| `pandas` | Data manipulation |
+| `joblib` | Model serialisation |
+| `matplotlib` | Evaluation plots |
+| `numpy` | Numerical utilities |
+| `fastapi` | REST API framework |
+| `pydantic` | Request validation |
 
 ---
 
-## 12. Usage Guide
+## 11. Usage Guide
 
-### Train models from scratch
-
-```bash
-python main.py
-```
-
-Trains and saves all 100 Prophet models to `models/prophet_models/`.
-
-### Launch the Streamlit dashboard
-
-```bash
-python -m streamlit run app.py
-# → http://localhost:8501
-```
-
-### Launch the REST API
-
-```bash
-uvicorn server:app --reload --host 0.0.0.0 --port 8000
-# → http://localhost:8000/docs
-```
-
-### Run the EDA notebook
-
-```bash
-jupyter notebook notebooks/EDA_and_Feature_Engineering.ipynb
-```
-
-### Evaluate trained models
-
-```bash
-python -c "
-from src.evaluate import evaluate_models
-evaluate_models(
-    'data/retail_warehouse_inventory_dataset.csv',
-    'models/prophet_models'
-)
-"
-```
+| Goal | Command |
+|---|---|
+| Train all models | `python main.py` |
+| Streamlit dashboard | `python -m streamlit run app.py` |
+| FastAPI server | `uvicorn server:app --reload` |
+| EDA notebook | `jupyter notebook notebooks/EDA_and_Feature_Engineering.ipynb` |
+| Evaluate models | `python -c "from src.evaluate import evaluate_models; evaluate_models('data/retail_warehouse_inventory_dataset.csv', 'models/prophet_models')"` |
 
 ---
 
-## 13. Model Inventory
+## 12. Model Inventory
 
-100 Prophet models are pre-trained and stored as `.joblib` artefacts.
+100 models trained across **5 stores × 20 products**.
 
+```mermaid
+quadrantChart
+    title Model coverage — Stores vs Products
+    x-axis "Products P0001 → P0020"
+    y-axis "Stores S001 → S005"
+    quadrant-1 High Store / High Product
+    quadrant-2 High Store / Low Product
+    quadrant-3 Low Store / Low Product
+    quadrant-4 Low Store / High Product
+    S001-P0010: [0.50, 0.10]
+    S002-P0010: [0.50, 0.35]
+    S003-P0010: [0.50, 0.60]
+    S004-P0010: [0.50, 0.85]
+    S005-P0010: [0.50, 0.99]
 ```
-  Model naming:  {STORE_ID}_{PRODUCT_ID}_prophet.joblib
-  Example:       S003_P0014_prophet.joblib  →  Store 3, Product 14
 
-  ┌────────┬─────────────────────────────────────────────┬───────┐
-  │  Store │  Products                                   │ Count │
-  ├────────┼─────────────────────────────────────────────┼───────┤
-  │  S001  │  P0001 – P0020                             │  20   │
-  │  S002  │  P0001 – P0020                             │  20   │
-  │  S003  │  P0001 – P0020                             │  20   │
-  │  S004  │  P0001 – P0020                             │  20   │
-  │  S005  │  P0001 – P0020                             │  20   │
-  ├────────┼─────────────────────────────────────────────┼───────┤
-  │        │                                   TOTAL     │ 100   │
-  └────────┴─────────────────────────────────────────────┴───────┘
-```
+**Naming convention:** `{STORE_ID}_{PRODUCT_ID}_prophet.joblib`
+> Example: `S003_P0014_prophet.joblib` — Store 3, Product 14
 
-All models are loaded on-demand. No model is held in memory until requested, keeping the system memory-efficient at any scale.
+All models are loaded on-demand via `joblib.load()`. No model is held in memory until requested.
 
 ---
 
-## 14. Key Results & Insights
+## 13. Key Insights
 
-### Dataset quality
+### Data quality
+- **Zero nulls** across all 73,100 records — no imputation required
+- Every store-product pair has a complete, unbroken 2-year daily series
+- High variance in Units Sold (std 108.9 vs mean 136.5) confirms per-pair modelling is essential
 
-- **Zero missing values** across all 73,100 records — no imputation required
-- **Balanced coverage**: every store-product pair has continuous daily observations across the full 2-year window
-- **Units Sold** ranges 0–499 per day per pair (mean 136.5, std 108.9) — high variance across pairs makes a single global model insufficient; per-pair modelling is essential
-
-### Model design decisions
+### Design decisions
 
 | Decision | Rationale |
 |---|---|
-| One model per store-product | Retail demand is highly specific to location and category; shared models cannot capture per-pair seasonality |
-| Weekly seasonality ON | Clear Mon–Sun sales cycles exist in retail data; improves short-horizon accuracy |
-| Daily seasonality OFF | At daily granularity there is no sub-day signal; enabling introduces noise |
-| 4-year horizon (1,460 days) | Supports multi-year strategic planning scenarios without retraining |
-| Joblib serialisation | Fast binary serialisation; load latency is negligible even for 100 models |
+| One model per store-product | Retail demand is highly pair-specific; shared models under-perform |
+| Weekly seasonality ON | Clear Mon–Sun cycles in retail data |
+| Daily seasonality OFF | No sub-day signal at daily grain; enabling adds noise |
+| 4-year forecast horizon | Supports multi-year strategic planning without retraining |
+| joblib serialisation | Near-zero load latency across all 100 models |
 
-### Forecast reliability notes
+### Forecast horizon reliability
 
+```mermaid
+graph LR
+    A["7–14 days\nNarrow bands\nHigh reliability"] --> B["30 days\nWider bands\nInventory planning"]
+    B --> C["90+ days\nDirectional only\nQualitative guidance"]
+    C --> D["4 years\nScenario planning\nStrategic use only"]
 ```
-  Short horizon  (7–14 days)   — narrow confidence bands, highest reliability
-  Medium horizon (30 days)     — wider bands, good for inventory planning
-  Long horizon   (90+ days)    — qualitative directional guidance only
-  Max horizon    (4 years)     — strategic planning, treat bounds as scenarios
-```
-
-### Notable data observations
-
-- The pre-existing `Demand Forecast` column in the source data has a minimum of -9.99, indicating the baseline forecast can produce negative values. Prophet's additive model is bounded more realistically.
-- `Holiday/Promotion` is flagged on approximately 50% of all days, suggesting promotional periods are embedded evenly throughout the dataset.
-- Price and Competitor Pricing have very similar distributions (mean ~55, range 5–105), indicating competitive pricing parity across the retail network.
 
 ---
 
-## 15. Tech Stack
+## 14. Tech Stack
 
-```
-  ┌─────────────────────────────────────────────────────────────────────────┐
-  │                                                                         │
-  │   Language          Python 3.10+                                        │
-  │                                                                         │
-  │   Forecasting       Facebook Prophet  — additive time-series model      │
-  │   Data              pandas            — ETL, resampling, aggregation     │
-  │   Serialisation     joblib            — model persistence/loading        │
-  │   Visualisation     Streamlit charts  — line charts, metric displays     │
-  │   Evaluation plot   matplotlib        — Prophet component figures        │
-  │   Numerics          numpy             — seed control, array operations   │
-  │                                                                         │
-  │   Dashboard         Streamlit 1.x     — multi-tab single-page app        │
-  │   REST API          FastAPI           — async ASGI service               │
-  │   Validation        Pydantic          — request/response schemas         │
-  │   API Server        Uvicorn           — ASGI runner                     │
-  │   Notebook          Jupyter + ipykernel — EDA & feature engineering      │
-  │                                                                         │
-  │   Dev Tools         git · pip · VS Code                                 │
-  │                                                                         │
-  └─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Core
+        Python["Python 3.10+"]
+        Pandas["pandas — ETL & resampling"]
+        Numpy["numpy — numerics"]
+    end
+
+    subgraph Forecasting
+        Prophet["Facebook Prophet\nAdditive decomposition"]
+        Joblib["joblib — model persistence"]
+    end
+
+    subgraph Interfaces
+        Streamlit["Streamlit\nInteractive dashboard"]
+        FastAPI["FastAPI + Pydantic\nREST API"]
+        Uvicorn["Uvicorn — ASGI server"]
+    end
+
+    subgraph Analysis
+        Jupyter["Jupyter — EDA notebook"]
+        Matplotlib["matplotlib — evaluation plots"]
+    end
+
+    Python --> Prophet
+    Python --> Streamlit
+    Python --> FastAPI
+    Pandas --> Prophet
+    Prophet --> Joblib
+    Joblib --> Streamlit
+    Joblib --> FastAPI
 ```
 
 ---
