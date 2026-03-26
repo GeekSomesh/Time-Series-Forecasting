@@ -5,6 +5,8 @@
 
 **Prophet-powered multi-store demand forecasting — Streamlit dashboard · FastAPI REST service · automated training pipeline**
 
+![Time Series Forecasting Dashboard](https://github.com/user-attachments/assets/281c76d6-01c0-4d2e-9fe3-ade5aff6c6b3)
+
 **Live App:** [time-series-forecasting-ml-model.streamlit.app](https://time-series-forecasting-ml-model.streamlit.app/)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-1a1a2e?style=flat-square&logo=python&logoColor=c9a84c)
